@@ -10,16 +10,22 @@ import re
 import csv
 
 
-"""1、读入数据.2、清理数据.3、写出数据."""
-filename = "data_file\\ershoufang-origin-utf8.csv"
+"""
+1、读入数据.2、清理数据.3、写出数据.
+"""
+filename = "data_file\\ershoufang-mini-utf8.csv"
 with open(filename,encoding="utf-8") as f:
     reader = csv.reader(f)
     context = [line for line in reader]
 
-with open("data_file\\ershoufang-clean-utf8-v1.1.txt","w",encoding="utf-8",newline="") as f:
+with open("data_file\\ershoufang-mini-utf8.txt","w",encoding="utf-8",newline="") as f:
     writer = csv.writer(f)
     for line in context:
         line = [x.strip() for x in line]#去除每个数据项的空白符和换行符
+        if line[0] == "id":
+            writer.writerow(line)
+            continue
+        
         #将杂乱的记录的数据项对齐
         if "别墅" in line:
             line_copy = line[:]

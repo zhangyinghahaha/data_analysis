@@ -81,6 +81,7 @@ class SpiderMain():
                 self.log.logger.error("2.1 拼接地址出现异常:" + detail_url)
             
             #2.2 下载页面
+			#如果下载器处理了预想到的异常，就会返回None，此时主程序不会触发异常，所以会存在写入为空的情况，会跳过部分id
             try:
                 detail_html = self.downloader.download(detail_url)
             except Exception as e:

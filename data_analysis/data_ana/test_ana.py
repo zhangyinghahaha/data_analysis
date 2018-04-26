@@ -50,7 +50,8 @@ plt.show()
 fig = plt.figure(figsize=(8,8))
 ax = fig.add_subplot(111)
 
-df['fwhx'].value_counts()[:].plot.pie(cmap=plt.cm.rainbow)
+#df['fwhx'].value_counts()[:].plot.pie(cmap=plt.cm.rainbow)
+df['fwhx'].value_counts()[:].plot(kind="pie",cmap=plt.cm.rainbow)
 #plt.savefig('data_ana\\picture\\房屋户型.jpg')
 plt.title('南京二手房房屋户型分布')
 

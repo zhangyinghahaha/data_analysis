@@ -5,7 +5,6 @@ Created on Tue Apr 24 16:45:52 2018
 @author: ying.zhang01
 """
 
-
 import re
 import csv
 

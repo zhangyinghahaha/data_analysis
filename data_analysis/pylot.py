@@ -58,3 +58,37 @@ a = np.random.normal(mu,sigma,size=100)
 
 plt.hist(a,10,normed=1,histtype="stepfilled",facecolor="b",alpha=0.75)
 plt.show()
+
+from pyecharts import Bar
+
+bar = Bar("我的第一个图表", "这里是副标题")
+bar.add("服装", ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"], [5, 20, 36, 10, 75, 90])
+bar.print_echarts_options()
+bar.render()
+
+df1 = pd.DataFrame(np.arange(12.).reshape(3,4),columns=list("abcd"))
+df1.plot(kind="box",fontsize=12)
+
+data1 = {"key":["a","a","b","b"],"name":[1,2,3,4]}
+frame1 = pd.DataFrame(data1)
+seri = pd.Series([1,1,1,1])
+seri.name = "name2"
+frame1[seri.name] = seri
+
+g = frame1["name"].groupby(frame1["key"])
+g.size()
+
+flag = 1
+
+for f1,f2 in g:
+    if flag == 1:
+        re = pd.DataFrame(list(f2),columns=[f1])
+        print(f1)
+        print(f2)
+        flag = 2
+        continue
+    re[f1] = list(f2)
+    print(f1)
+    print(f2)
+    
+

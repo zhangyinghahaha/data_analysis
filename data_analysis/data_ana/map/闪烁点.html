@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>基本地图展示</title>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <script src="http://cache.amap.com/lbs/static/es5.min.js"></script>
+    <script src="http://webapi.amap.com/maps?v=1.4.6&key=b8a743e6e8fc51e1b6f280b925a7ae9c"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+	<script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        center: [118.800459, 32.06715],
+        zoom: 11
+    });
+	
+	function refresh(enName) {
+        map.setMapStyle('amap://styles/'+enName);
+    }
+	refresh("blue");
+	
+	//加载PointSimplifier，loadUI的路径参数为模块名中 'ui/' 之后的部分 
+	AMapUI.loadUI(['misc/PointSimplifier'],function(PointSimplifier, $){
+
+        if (!PointSimplifier.supportCanvas) {
+            alert('当前环境不支持 Canvas！');
+            return;
+        }
+		//启动页面
+		//创建组件实例
+		var pointSimplifierIns = new PointSimplifier({
+			map: map, //关联的map
+			getPosition: function(item) 
+			{
+				if (!item) 
+				{
+                    return null;
+                }
+
+                var parts = item.split(',');
+
+                //返回经纬度
+                return [parseFloat(parts[0]), parseFloat(parts[1])];
+			},
+			getHoverTitle: function(dataItem) 
+			{
+				//返回数据项的Title信息，鼠标hover时显示
+				return dataItem;
+			},
+			renderOptions: 
+			{
+            //点的样式
+				pointStyle: 
+				{
+					fillStyle: 'red' //蓝色填充
+				}
+			}
+		});
+		
+		window.pointSimplifierIns = pointSimplifierIns;
+
+        $('<div id="loadingTip">加载数据，请稍候...</div>').appendTo(document.body);
+        $.get('star.txt', function(csv) {
+
+            var data = csv.split('\n');
+
+            pointSimplifierIns.setData(data);
+
+            $('#loadingTip').remove();
+        });
+		
+		//随机创建一批点，仅作示意
+		//var data = createPoints(map.getCenter(), 100000);
+
+		//设置数据源，data需要是一个数组
+		//pointSimplifierIns.setData(data);
+
+		//监听事件
+		pointSimplifierIns.on('pointClick pointMouseover pointMouseout', function(e, record) {
+			//console.log(e.type, record);
+		});
+	});
+
+</script>
+</body>
+</html>

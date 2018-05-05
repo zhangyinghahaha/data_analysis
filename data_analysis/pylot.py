@@ -92,3 +92,5 @@ for f1,f2 in g:
     print(f2)
     
 
+data1 = [[1,2,3,4],[5,6,7,8]]
+arr1 = np.array(data1)

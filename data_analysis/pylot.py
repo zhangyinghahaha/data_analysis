@@ -92,5 +92,13 @@ for f1,f2 in g:
     print(f2)
     
 
-data1 = [[1,2,3,4],[5,6,7,8]]
+data1 = [0,1,2,3]
+data2 = [2,3,4,5]
 arr1 = np.array(data1)
+arr2 = np.array(data2)
+np.sum(np.power(arr2-arr1, 2))
+
+data3 = [[0,1,2,3],[2,3,4,5],[2,3,4,5]]
+arr3 = np.array(data3)
+index_a = arr3[:,1:3]
+value = np.nonzero(index_a == 2)

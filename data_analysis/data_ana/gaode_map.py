@@ -88,6 +88,8 @@ df_merge = pd.merge(df,df_latlng,on="id")
 
 #小于200万
 xiaoyu = df_merge[df_merge["total"]<201]
+xiaoyu2 = df_merge.loc[df_merge["total"]<201]
+xiaoyu2 = xiaoyu2.loc[xiaoyu2["jzmj"] < 50]
 
 
 """4、生成需要的格式文件"""

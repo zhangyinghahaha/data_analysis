@@ -10,21 +10,32 @@ import numpy as np
 class KMeansClassifier():
     "this is a k-means classifier"
     
-    def __init__(self, k=3, initCent='random', max_iter=500 ):
-        
+    
+    def __init__(self, k=3, initCent='random', max_iter=5000):
+        """构造函数，初始化相关属性"""
         self._k = k
         self._initCent = initCent#初始中心
         self._max_iter = max_iter#最大迭代
-        self._clusterAssment = None#簇结果
+        #一个m*2的二维矩阵，矩阵第一列存储样本点所属的族的索引值，
+        #第二列存储该点与所属族的质心的平方误差
+        self._clusterAssment = None#样本点聚类结结构矩阵
         self._labels = None
-        self._sse = None#和方差
+        self._sse = None#SSE（Sum of squared errors）平方误差和
+     
         
     def _calEDist(self, arrA, arrB):
         """
         功能：欧拉距离距离计算
         输入：两个一维数组
         """
-        return np.math.sqrt(sum(np.power(arrA-arrB, 2)))
+        arrA_temp = arrA.copy()
+        arrB_temp = arrB.copy()
+        arrA_temp[0] = arrA_temp[0]*0.16
+        arrA_temp[1] = arrA_temp[1]*0.005
+        arrB_temp[0] = arrB_temp[0]*0.16
+        arrB_temp[1] = arrB_temp[1]*0.005
+        return np.math.sqrt(sum(np.power(arrA_temp - arrB_temp, 2)))
+    
     
     def _calMDist(self, arrA, arrB):
         """
@@ -39,14 +50,15 @@ class KMeansClassifier():
         功能：随机选取k个质心
         输出：centroids #返回一个m*n的质心矩阵
         """
-        n = data_X.shape[1] #获取特征值的维数
+        n = data_X.shape[1] - 3 #获取特征值的维数(要删除一个用于标记的id列和经纬度值)
         centroids = np.empty((k,n))  #使用numpy生成一个k*n的矩阵，用于存储质心
         for j in range(n):
-            minJ = min(data_X[:, j])
-            rangeJ  = float(max(data_X[:, j] - minJ))
+            minJ = min(data_X[:,j+1])
+            rangeJ = max(data_X[:,j+1] - minJ)
             #使用flatten拉平嵌套列表(nested list)
             centroids[:, j] = (minJ + rangeJ * np.random.rand(k, 1)).flatten()
         return centroids 
+    
     
     def fit(self, data_X):
         """
@@ -60,7 +72,7 @@ class KMeansClassifier():
                 raise TypeError("numpy.ndarray resuired for data_X")
                 
         m = data_X.shape[0]  #获取样本的个数
-        #一个m*2的二维矩阵，矩阵第一列存储样本点所属的族的索引值，
+        #一个m*2的二维矩阵，矩阵第一列存储样本点所属的族的编号，
         #第二列存储该点与所属族的质心的平方误差
         self._clusterAssment = np.zeros((m,2)) 
         
@@ -77,7 +89,7 @@ class KMeansClassifier():
                 minIndex = -1    #将最近质心的下标置为-1
                 for j in range(self._k): #次迭代用于寻找元素最近的质心
                     arrA = self._centroids[j,:]
-                    arrB = data_X[i,:]
+                    arrB = data_X[i,1:4]
                     distJI = self._calEDist(arrA, arrB) #计算距离
                     if distJI < minDist:
                         minDist = distJI
@@ -88,13 +100,14 @@ class KMeansClassifier():
             if not clusterChanged:#若所有样本点所属的族都不改变,则已收敛,结束迭代
                 break
             for i in range(self._k):#更新质心，将每个族中的点的均值作为质心
-                index_all = self._clusterAssment[:,0] #取出样本所属簇的索引值
+                index_all = self._clusterAssment[:,0] #取出样本所属簇的编号
                 value = np.nonzero(index_all==i) #取出所有属于第i个簇的索引值
                 ptsInClust = data_X[value[0]]    #取出属于第i个簇的所有样本点
-                self._centroids[i,:] = np.mean(ptsInClust, axis=0) #计算均值
+                self._centroids[i,:] = np.mean(ptsInClust[:,1:4], axis=0) #计算均值,赋予新的质心
         
         self._labels = self._clusterAssment[:,0]
         self._sse = sum(self._clusterAssment[:,1])
+    
     
     def predict(self, X):#根据聚类结果，预测新输入数据所属的族
         #类型检查

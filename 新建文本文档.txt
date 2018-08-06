@@ -1,5 +1,0 @@
-随机森林
-决策树（carrt）
-聚类算法（k-means）
-分类和聚类
-page-rank

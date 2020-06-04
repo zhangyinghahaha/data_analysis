@@ -19,7 +19,7 @@ def getlnglat(address):
     """
     url_base = "http://api.map.baidu.com/geocoder/v2/"
     output = "json"
-    ak = "5VlZh7U5gYagujGlrTtNFErWyWqRFLNG" # 浏览器端密钥
+    ak = "" # 浏览器端密钥
     address = quote(address) # 由于本文地址变量为中文，为防止乱码，先用quote进行编码
     url = url_base + '?' + 'address=' + address  + '&output=' + output + '&ak=' + ak 
     lat = 0.0
